@@ -1,2 +1,1 @@
-tring SCHOOL School data
-!:mime School
+file -m/path/to/school.mgc /path/to/datafile
