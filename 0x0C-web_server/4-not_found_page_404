@@ -1,22 +1,22 @@
 #!/usr/bin/env bash
-#Configure your Nginx server to have a custom 404 page that contains the string Ceci n'est pas une page.
+# Install nginx, set up to listen to port 80 and change default page served to
 
-STRING="Hello World!"
 
-REDIRECT="\n\tlocation /redirect_me {\n\t\treturn 301 https://youtu.be/dQw4w9WgXcQ;\n\t}\n"
-FILE="/etc/nginx/sites-available/default"
+sudo apt-get -y update
+sudo apt-get -y install nginx
+sudo ufw allow 'Nginx HTTP'
+echo "Hello World!" | sudo tee /var/www/html/index.nginx-debian.html
 
-ERRORFILE="/usr/share/nginx/html/404error.html"
-FOUR="Ceci n'est pas une page"
-ERRORREDIRECT="\n\terror_page 404 /404error.html;\n\tlocation = /404error.html {\n\t\troot /usr/share/nginx/html;\n\t\tinternal;\n\t}\n"
+# configure redirection
+new_str="\\\trewrite ^/redirect_me https://www.youtube.com/watch?v=QH2-TGUlwu4\
+wu4 permanent;"
+sudo sed -i "42i $new_str" /etc/nginx/sites-available/default
 
-apt-get -y update
-apt-get -y install nginx
-ufw allow 'Nginx HTTP'
-sudo echo "$STRING" > /var/www/html/index.nginx-debian.html
-sed -i "37i\ $REDIRECT" "$FILE"
+# create custom error 404 page
+echo "Ceci n'est pas une page" | sudo tee /var/www/html/error404
+# configure custom error page to be served
+new_str="\\\terror_page 404 /error404;"
+sudo sed -i "43i $new_str" /etc/nginx/sites-available/default
 
-echo "$FOUR" > "$ERRORFILE"
-sed -i "37i\ $ERRORREDIRECT" "$FILE"
-
-service nginx restart
+# restart nginx server
+sudo service nginx restart
